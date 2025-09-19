@@ -1,0 +1,86 @@
+#include <fstream>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+int N, M = 0;
+int Path;
+
+int SearchMin(vector<vector<int>>& field1, vector<vector<int>>& field2, int M, int N, vector <pair<int, int>>& way)
+{
+    for (int m = 1; m < N; m++)
+    {
+        field1[0][m] = field1[0][m - 1] + field2[0][m];
+    }
+    for (int i = 1; i < M; i++)
+    {
+        field1[i][0] = field1[i - 1][0] + field2[i][0];
+    }
+    for (int m = 1; m < M; m++)
+    {
+        for (int i = 1; i < N; i++)
+        {
+            field1[m][i] = field2[m][i] + std::min(field1[m - 1][i], field1[m][i - 1]);
+        }
+    }
+    return field1[M - 1][N - 1];
+}
+
+int main(int argc, char* argv[])
+{
+    ifstream input(argv[1]);
+    if (!input.is_open())
+    {
+        cout << "Failed to open " << argv[1] << " for reading\n";
+        return 1;
+    }
+    ofstream output(argv[2]);
+    if (!output.is_open())
+    {
+        cout << "Failed to open " << argv[2] << " for writing\n";
+        return 1;
+    }
+    input >> M;
+    input >> N;
+
+    vector<vector<int>> field1(M, vector<int>(N));
+    vector<vector<int>> field2(M, vector<int>(N));
+
+    for (int m = 0; m < M; m++)
+    {
+        for (int i = 0; i < N; i++)
+        {
+            input >> field1[m][i];
+            field2[m][i] = field1[m][i];
+        }
+    }
+    vector <pair<int, int>> way;
+    Path = SearchMin(field1, field2, M, N, way);
+
+    int j = M - 1, k = N - 1;
+    way.push_back({ j + 1, k + 1 });
+    while (j > 0 || k > 0) {
+        if (j == 0) k--;
+        else if (k == 0) j--;
+        else if (field1[j - 1][k] < field1[j][k - 1]) j--;
+        else k--;
+        way.push_back({ j + 1, k + 1 });
+    }
+    reverse(way.begin(), way.end());
+    output << Path << endl;
+    for (int m = 0; m < way.size(); m++)
+    {
+        output << way[m].first << " " << way[m].second << endl;
+    }
+}
+
+// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
+// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
+
+// Советы по началу работы 
+//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
+//   2. В окне Team Explorer можно подключиться к системе управления версиями.
+//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
+//   4. В окне "Список ошибок" можно просматривать ошибки.
+//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
+//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
