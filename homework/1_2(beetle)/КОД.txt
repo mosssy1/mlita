@@ -1,0 +1,67 @@
+#include <iostream>
+#include <vector>
+#include <fstream>
+
+using namespace std;
+
+int M, N;
+vector<vector<char>> garden;
+vector<vector<bool>> visited;
+
+// Проверка возможности посещения ячейки
+bool canVisit(int row, int col) {
+    if (row < 0 || row >= M || col < 0 || col >= N) {
+        return false; // выход за границы участка
+    }
+    if (garden[row][col] == '.' || visited[row][col]) {
+        return false; // ячейка пуста или уже посещена
+    }
+    return true;
+}
+
+// Поиск в глубину (DFS)
+void dfs(int row, int col) {
+    visited[row][col] = true;
+    // проверяем все соседние ячейки
+    if (canVisit(row - 1, col)) {
+        dfs(row - 1, col); // вверх
+    }
+    if (canVisit(row + 1, col)) {
+        dfs(row + 1, col); // вниз
+    }
+    if (canVisit(row, col - 1)) {
+        dfs(row, col - 1); // влево
+    }
+    if (canVisit(row, col + 1)) {
+        dfs(row, col + 1); // вправо
+    }
+}
+
+int main(int argc, char* argv[]) {
+    ifstream input(argv[1]);
+    ofstream output(argv[2]);
+    input >> M >> N;
+    garden.resize(M, vector<char>(N));
+    visited.resize(M, vector<bool>(N, false));
+    // считываем грядку
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < N; j++) {
+            input >> garden[i][j];
+        }
+    }
+    int count = 0; // количество съеденных кустов
+    int max_count = 0;
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < N; j++) {
+            if (garden[i][j] == '#' && !visited[i][j]) {
+                dfs(i, j); // идем в глубину из текущей ячейки
+                count++; // увеличиваем счетчик посещенных ячеек
+            }
+        }
+    }
+    cout << count << endl; // выводим количество съеденных кустов
+    return 0;
+}
+
+
+
