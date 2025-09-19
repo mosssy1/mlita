@@ -1,0 +1,3 @@
+﻿  virus.cpp
+D:\ycheba\МЛиТА\практик\virus\virus\virus.cpp(62,36): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+  virus.vcxproj -> D:\ycheba\МЛиТА\практик\virus\x64\Debug\virus.exe
